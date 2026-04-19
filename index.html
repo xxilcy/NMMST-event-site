@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>海科館活動報名</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --nmmst-blue: #004A7C; /* 海科館專業深海藍 */
@@ -37,5 +38,40 @@
             <button type="submit">送出報名</button>
         </form>
     </div>
+
+    <script>
+        // --- 請將下方的資料替換成你 Supabase 的實際資訊 ---
+        const supabaseUrl = 'https://sqgleqbuhnixhmdfdmqy.supabase.co'; 
+        const supabaseKey = 'sb_publishable_fYTFzKqHCCCDPgr3YB5YMQ_WBxvu7H6'; 
+        // ----------------------------------------------
+
+        const supabase = supabaseClient.createClient(supabaseUrl, supabaseKey);
+
+        document.getElementById('applyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const idCard = document.getElementById('id_card').value;
+            const type = document.getElementById('type').value;
+
+            // 準備資料存入 Supabase
+            const { error } = await supabase
+                .from('applications')
+                .insert([
+                    { 
+                        applicant_name: name,
+                        applicant_id_card: idCard,
+                        applicant_type: type
+                    }
+                ]);
+
+            if (error) {
+                alert('報名失敗: ' + error.message);
+            } else {
+                alert('報名成功！');
+                document.getElementById('applyForm').reset();
+            }
+        });
+    </script>
 </body>
 </html>
