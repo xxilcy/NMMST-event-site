@@ -8,52 +8,70 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-stone-50 min-h-screen">
+
     <nav class="bg-white p-4 flex justify-between items-center shadow-sm border-b">
-        <div class="font-bold text-xl text-blue-900">📅 海科館活動報名</div>
-        <div id="userState"></div>
+        <div class="font-bold text-xl text-blue-900 cursor-pointer" onclick="showView('home')">📅 海科館活動報名</div>
+        <div class="space-x-4">
+            <button onclick="showView('home')" class="text-gray-600">瀏覽活動</button>
+            <button onclick="showView('auth')" class="bg-stone-800 text-white px-4 py-2 rounded">登入/註冊</button>
+        </div>
     </nav>
 
-    <div class="max-w-md mx-auto mt-10 p-8 bg-white rounded-2xl shadow-lg">
-        <h2 class="text-2xl font-bold mb-6 text-center">建立會員帳號</h2>
-        <form id="signupForm" class="space-y-4">
-            <input type="text" id="full_name" placeholder="真實姓名" class="w-full p-3 border rounded" required>
-            <input type="text" id="id_card" placeholder="身分證字號" class="w-full p-3 border rounded" required>
-            <input type="date" id="birthday" class="w-full p-3 border rounded" required>
-            <input type="email" id="email" placeholder="電子信箱" class="w-full p-3 border rounded" required>
-            <input type="tel" id="phone" placeholder="手機號碼" class="w-full p-3 border rounded" required>
-            <input type="password" id="password" placeholder="密碼 (至少 6 碼)" class="w-full p-3 border rounded" required minlength="6">
-            <button type="submit" class="w-full bg-amber-900 text-white py-3 rounded-lg font-bold">完成註冊</button>
-        </form>
-    </div>
+    <main id="home-view" class="p-8">
+        <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-lg border">
+            <h2 class="text-3xl font-bold mb-4">[海科館] 2026年世界海洋日x原住民文化推廣</h2>
+            <p class="text-gray-600 mb-6">歡迎參加本次活動，請點擊下方按鈕進行報名。</p>
+            <button onclick="showView('auth')" class="w-full bg-amber-900 text-white py-3 rounded-lg font-bold">登入後報名</button>
+        </div>
+    </main>
+
+    <main id="auth-view" class="p-8 hidden">
+        <div class="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-lg border">
+            <h2 class="text-2xl font-bold mb-6 text-center">建立會員帳號</h2>
+            <form id="signupForm" class="space-y-4">
+                <input type="text" id="full_name" placeholder="真實姓名" class="w-full p-3 border rounded" required>
+                <input type="text" id="id_card" placeholder="身分證字號" class="w-full p-3 border rounded" required>
+                <input type="date" id="birthday" class="w-full p-3 border rounded" required>
+                <input type="email" id="email" placeholder="電子信箱" class="w-full p-3 border rounded" required>
+                <input type="tel" id="phone" placeholder="手機號碼" class="w-full p-3 border rounded" required>
+                <input type="password" id="password" placeholder="密碼 (至少 6 碼)" class="w-full p-3 border rounded" required minlength="6">
+                <button type="submit" class="w-full bg-amber-900 text-white py-3 rounded-lg font-bold">完成註冊</button>
+            </form>
+            <button onclick="showView('home')" class="w-full mt-4 text-gray-500 underline">← 返回瀏覽活動</button>
+        </div>
+    </main>
 
     <script>
-        // 【請務必填入你的實際金鑰】
-        const SUPABASE_URL = 'https://sqgleqbuhnixhmdfdmqy.supabase.co'; 
-        const SUPABASE_KEY = 'sb_publishable_fYTFzKqHCCCDPgr3YB5YMQ_WBxvu7H6'; 
-        
+        // 切換視圖的邏輯
+        function showView(viewId) {
+            document.getElementById('home-view').classList.add('hidden');
+            document.getElementById('auth-view').classList.add('hidden');
+            document.getElementById(viewId + '-view').classList.remove('hidden');
+        }
+
+        // 金鑰設定
+        const SUPABASE_URL = '你的_PROJECT_URL_放在這裡'; 
+        const SUPABASE_KEY = '你的_PUBLISHABLE_KEY_放在這裡'; 
         const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // 註冊邏輯
         document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // 1. 註冊帳號
-            const { data, error: authError } = await supabase.auth.signUp({
+            const { data, error } = await supabase.auth.signUp({
                 email: document.getElementById('email').value,
                 password: document.getElementById('password').value
             });
-            if (authError) return alert("註冊失敗: " + authError.message);
-
-            // 2. 存入額外個人資料至 profiles 表
-            const { error: profileError } = await supabase.from('profiles').insert([{
+            if (error) return alert("錯誤: " + error.message);
+            
+            // 寫入額外資料
+            await supabase.from('profiles').insert([{
                 id: data.user.id,
                 name: document.getElementById('full_name').value,
                 id_card: document.getElementById('id_card').value,
                 birthday: document.getElementById('birthday').value,
                 phone: document.getElementById('phone').value
             }]);
-
-            if (profileError) alert("帳號已建立，但個人資料存入失敗: " + profileError.message);
-            else alert("註冊成功！");
+            alert("註冊成功！");
         });
     </script>
 </body>
