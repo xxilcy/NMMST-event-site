@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海科館活動報名</title>
+    <style>
+        :root {
+            --nmmst-blue: #004A7C; /* 海科館專業深海藍 */
+            --bg-blue: #F0F7FA;    /* 極淺海洋微藍 */
+        }
+        body { font-family: "Helvetica Neue", Arial, sans-serif; background-color: var(--bg-blue); color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-top: 5px solid var(--nmmst-blue); }
+        h1 { color: var(--nmmst-blue); text-align: center; margin-bottom: 30px; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: var(--nmmst-blue); }
+        input, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        button { background: var(--nmmst-blue); color: white; padding: 15px; border: none; border-radius: 6px; width: 100%; margin-top: 25px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #00365c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>活動報名系統</h1>
+        <form id="applyForm">
+            <label>姓名</label>
+            <input type="text" id="name" placeholder="請輸入姓名" required>
+            
+            <label>身分證字號</label>
+            <input type="text" id="id_card" placeholder="請輸入身分證字號" required>
+            
+            <label>報名類別</label>
+            <select id="type">
+                <option value="攤主">攤主</option>
+                <option value="表演者">表演者</option>
+            </select>
+            
+            <button type="submit">送出報名</button>
+        </form>
+    </div>
+</body>
+</html>
