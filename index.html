@@ -2,75 +2,57 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>海科館活動報名</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --nmmst-blue: #004A7C; /* 海科館專業深海藍 */
-            --bg-blue: #F0F7FA;    /* 極淺海洋微藍 */
-        }
-        body { font-family: "Helvetica Neue", Arial, sans-serif; background-color: var(--bg-blue); color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-top: 5px solid var(--nmmst-blue); }
-        h1 { color: var(--nmmst-blue); text-align: center; margin-bottom: 30px; }
-        label { display: block; margin-top: 15px; font-weight: bold; color: var(--nmmst-blue); }
-        input, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { background: var(--nmmst-blue); color: white; padding: 15px; border: none; border-radius: 6px; width: 100%; margin-top: 25px; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        button:hover { background: #00365c; }
-    </style>
+    <title>海科館活動報名系統</title>
 </head>
-<body>
-    <div class="container">
-        <h1>活動報名系統</h1>
-        <form id="applyForm">
-            <label>姓名</label>
-            <input type="text" id="name" placeholder="請輸入姓名" required>
-            
-            <label>身分證字號</label>
-            <input type="text" id="id_card" placeholder="請輸入身分證字號" required>
-            
-            <label>報名類別</label>
-            <select id="type">
+<body class="bg-slate-50 text-gray-900">
+
+    <nav class="bg-white p-4 flex justify-between items-center shadow-sm">
+        <div class="font-bold text-xl text-blue-900">📅 活動報名系統</div>
+        <div class="space-x-4">
+            <a href="#" class="text-gray-600">登入</a>
+            <a href="#" class="bg-stone-800 text-white px-4 py-2 rounded-md">立即註冊</a>
+        </div>
+    </nav>
+
+    <div class="bg-blue-500 text-white py-16 text-center">
+        <h1 class="text-4xl font-bold mb-4">歡迎參加我們的活動</h1>
+        <p class="mb-8">探索精彩活動，立即報名參加</p>
+        <div class="space-x-4">
+            <button class="bg-white text-blue-600 px-6 py-2 rounded-lg font-bold">瀏覽活動</button>
+            <button class="border border-white px-6 py-2 rounded-lg">立即註冊</button>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg border">
+        <h2 class="text-2xl font-bold mb-4">[海科館] 2026年世界海洋日x原住民文化推廣</h2>
+        <div class="text-gray-600 mb-4">
+            <p>📅 2026年4月2日 週四</p>
+            <p>📍 海科館主題館廣場</p>
+            <p>👥 0 人已報名</p>
+        </div>
+        <p class="mb-6">歡迎參加本次世界海洋日x原住民文化推廣活動，我們將於6月6日-6月7日於海科館主題館廣場舉辦...</p>
+        <button id="applyBtn" class="w-full bg-amber-900 text-white py-3 rounded-lg font-bold">登入後報名</button>
+    </div>
+
+    <div id="formContainer" class="hidden max-w-4xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg border">
+        <h2 class="text-xl font-bold mb-4">填寫報名資訊</h2>
+        <form id="applyForm" class="space-y-4">
+            <input type="text" id="name" placeholder="姓名" class="w-full p-3 border rounded" required>
+            <input type="text" id="id_card" placeholder="身分證字號" class="w-full p-3 border rounded" required>
+            <select id="type" class="w-full p-3 border rounded">
                 <option value="攤主">攤主</option>
                 <option value="表演者">表演者</option>
             </select>
-            
-            <button type="submit">送出報名</button>
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg">送出報名</button>
         </form>
     </div>
 
     <script>
-        // --- 請將下方的資料替換成你 Supabase 的實際資訊 ---
-        const supabaseUrl = 'https://sqgleqbuhnixhmdfdmqy.supabase.co'; 
-        const supabaseKey = 'sb_publishable_fYTFzKqHCCCDPgr3YB5YMQ_WBxvu7H6'; 
-        // ----------------------------------------------
-
-        const supabase = supabaseClient.createClient(supabaseUrl, supabaseKey);
-
-        document.getElementById('applyForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('name').value;
-            const idCard = document.getElementById('id_card').value;
-            const type = document.getElementById('type').value;
-
-            // 準備資料存入 Supabase
-            const { error } = await supabase
-                .from('applications')
-                .insert([
-                    { 
-                        applicant_name: name,
-                        applicant_id_card: idCard,
-                        applicant_type: type
-                    }
-                ]);
-
-            if (error) {
-                alert('報名失敗: ' + error.message);
-            } else {
-                alert('報名成功！');
-                document.getElementById('applyForm').reset();
-            }
+        // 互動邏輯：點擊按鈕顯示表單
+        document.getElementById('applyBtn').addEventListener('click', () => {
+            document.getElementById('formContainer').classList.remove('hidden');
         });
     </script>
 </body>
