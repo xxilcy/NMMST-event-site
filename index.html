@@ -3,78 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>海科館活動報名系統</title>
+    <title>海科館活動報名系統 - 登入</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-50 text-gray-900">
+<body class="bg-slate-50 text-gray-900 flex flex-col min-h-screen">
 
-    <nav class="bg-white p-4 flex justify-between items-center shadow-sm">
+    <nav class="bg-white p-4 flex justify-between items-center shadow-sm border-b">
         <div class="font-bold text-xl text-blue-900">📅 海科館活動報名</div>
+        <div class="space-x-4">
+            <a href="#activities" class="text-gray-600 hover:text-blue-900">瀏覽活動</a>
+            <span id="userEmail" class="text-gray-600 hidden"></span>
+            <button id="authBtn" class="bg-stone-800 text-white px-6 py-2 rounded-md hover:bg-stone-700 transition">登入</button>
+        </div>
     </nav>
 
-    <div class="bg-blue-600 text-white py-16 text-center">
-        <h1 class="text-4xl font-bold mb-4">活動報名進行中</h1>
-    </div>
-
-    <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg border">
-        <h2 class="text-2xl font-bold mb-4">[海科館] 2026年世界海洋日x原住民文化推廣</h2>
-        <div class="text-gray-600 mb-4 space-y-1">
-            <p>📅 2026年4月2日 週四</p>
-            <p>📍 海科館主題館廣場</p>
+    <main class="flex-grow">
+        
+        <div id="activitySection" class="p-8">
+            <div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+                <h2 class="text-3xl font-bold mb-4 text-blue-950">[海科館] 2026年世界海洋日x原住民文化推廣</h2>
+                <div class="text-gray-600 mb-6 space-y-1">
+                    <p>📅 2026年4月2日 週四</p>
+                    <p>📍 海科館主題館廣場</p>
+                </div>
+                <p class="text-gray-700 mb-8 leading-relaxed">歡迎參加本次世界海洋日x原住民文化推廣活動，我們將於6月6日-6月7日於海科館主題館廣場舉辦。現場有豐富的海洋特色課程、原民樂舞表演及工藝市集，詳情請參閱活動內容公告。本次活動需登入後方可報名。</p>
+                <button id="actionBtn" class="w-full bg-amber-900 text-white py-4 rounded-lg font-bold hover:bg-amber-800 transition text-lg flex items-center justify-center">
+                    <span id="actionBtnText">登入後報名</span>
+                    <span id="actionBtnLoading" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white ml-2"></span>
+                </button>
+            </div>
         </div>
-        <button id="applyBtn" class="w-full bg-amber-900 text-white py-3 rounded-lg font-bold hover:bg-amber-800 transition">登入後報名</button>
-    </div>
 
-    <div id="formContainer" class="hidden max-w-4xl mx-auto mt-6 p-6 bg-white rounded-xl shadow-lg border border-blue-100">
-        <h2 class="text-xl font-bold mb-4 text-blue-900">請填寫報名資訊</h2>
-        <form id="applyForm" class="space-y-4">
-            <input type="text" id="name" placeholder="姓名" class="w-full p-3 border rounded" required>
-            <input type="text" id="id_card" placeholder="身分證字號" class="w-full p-3 border rounded" required>
-            <select id="type" class="w-full p-3 border rounded bg-white">
-                <option value="攤主">攤主</option>
-                <option value="表演者">表演者</option>
-            </select>
-            <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg">送出報名</button>
-        </form>
-    </div>
+        <div id="loginSection" class="p-8 hidden">
+            <div class="max-w-md mx-auto p-8 bg-white rounded-2xl shadow-xl border border-blue-500">
+                <h1 class="text-3xl font-bold mb-2 text-blue-950">使用者登入</h1>
+                <p class="text-gray-600 mb-8">請輸入您的電子郵件與密碼</p>
+                
+                <form id="loginForm" class="space-y-5">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1.5">電子郵件</label>
+                        <input type="email" id="loginEmail" placeholder="請輸入電子郵件" class="w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-blue-300 outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1.5">密碼</label>
+                        <input type="password" id="loginPassword" placeholder="請輸入密碼" class="w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-blue-300 outline-none" required>
+                    </div>
+                    <button type="submit" id="loginBtn" class="w-full bg-stone-800 text-white py-4 rounded-xl font-bold hover:bg-stone-700 transition flex items-center justify-center">
+                        <span id="loginBtnText">登入</span>
+                        <span id="loginBtnLoading" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white ml-2"></span>
+                    </button>
+                </form>
+                <div class="mt-8 text-center text-gray-600">
+                    還沒有帳號？ <a href="#" id="showSignupBtn" class="text-blue-600 font-medium hover:underline">立即註冊</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="signupSection" class="p-8 hidden">
+            <div class="max-w-md mx-auto p-8 bg-white rounded-2xl shadow-xl border border-amber-900">
+                <h1 class="text-3xl font-bold mb-2 text-amber-950">註冊新帳號</h1>
+                <p class="text-gray-600 mb-8">歡迎您註冊海科館活動系統</p>
+                
+                <form id="signupForm" class="space-y-5">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1.5">電子郵件</label>
+                        <input type="email" id="signupEmail" placeholder="請輸入電子郵件" class="w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-amber-300 outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1.5">密碼</label>
+                        <input type="password" id="signupPassword" placeholder="請輸入密碼 (至少 6 碼)" class="w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-amber-300 outline-none" required minlength="6">
+                    </div>
+                    <button type="submit" id="signupBtn" class="w-full bg-amber-900 text-white py-4 rounded-xl font-bold hover:bg-amber-800 transition flex items-center justify-center">
+                        <span id="signupBtnText">註冊</span>
+                        <span id="signupBtnLoading" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white ml-2"></span>
+                    </button>
+                </form>
+                <div class="mt-8 text-center text-gray-600">
+                    已經有帳號？ <a href="#" id="showLoginBtn" class="text-blue-600 font-medium hover:underline">立即登入</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="applySection" class="p-8 hidden">
+            <div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg border border-blue-100">
+                <h2 class="text-xl font-bold mb-4 text-blue-900">填寫報名資訊</h2>
+                <form id="applyForm" class="space-y-4">
+                    <input type="text" id="name" placeholder="姓名" class="w-full p-3 border rounded" required>
+                    <input type="text" id="id_card" placeholder="身分證字號" class="w-full p-3 border rounded" required>
+                    <select id="type" class="w-full p-3 border rounded bg-white">
+                        <option value="攤主">攤主</option>
+                        <option value="表演者">表演者</option>
+                    </select>
+                    <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg flex items-center justify-center">
+                        <span id="submitBtnText">送出報名</span>
+                        <span id="submitBtnLoading" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white ml-2"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white p-6 mt-16 border-t text-center text-gray-500">
+        &copy; 2026 國立海洋科技博物館 NMMST 版權所有
+    </footer>
 
     <script>
-        // 記得填入你的 Supabase 金鑰
+        // --- 1. 請在此填入你的資料 ---
         const SUPABASE_URL = 'https://sqgleqbuhnixhmdfdmqy.supabase.co'; 
         const SUPABASE_KEY = 'sb_publishable_fYTFzKqHCCCDPgr3YB5YMQ_WBxvu7H6'; 
+        // ---------------------------
 
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // 修復後的互動：點擊按鈕顯示表單
-        document.getElementById('applyBtn').addEventListener('click', () => {
-            document.getElementById('formContainer').classList.remove('hidden');
-        });
+        // --- 互動邏輯：切換顯示區塊 ---
+        function showSection(sectionId) {
+            document.getElementById('activitySection').classList.add('hidden');
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('signupSection').classList.add('hidden');
+            document.getElementById('applySection').classList.add('hidden');
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
 
-        // 送出資料邏輯
-        document.getElementById('applyForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.innerText = "報名中...";
-            
-            try {
-                const { error } = await _supabase
-                    .from('applications')
-                    .insert([{ 
-                        applicant_name: document.getElementById('name').value,
-                        applicant_id_card: document.getElementById('id_card').value,
-                        applicant_type: document.getElementById('type').value
-                    }]);
-                if (error) throw error;
-                alert('報名成功！');
-                document.getElementById('applyForm').reset();
-            } catch (err) {
-                alert('報名失敗: ' + err.message);
-            } finally {
-                btn.innerText = "送出報名";
+        document.getElementById('authBtn').addEventListener('click', () => {
+            if (document.getElementById('authBtn').innerText === '登入') {
+                showSection('loginSection');
+            } else {
+                handleLogout();
             }
         });
+
+        document.getElementById('showSignupBtn').addEventListener('click', () => showSection('signupSection'));
+        document.getElementById('showLoginBtn').addEventListener('click', () => showSection('loginSection'));
+
+        // 按活動卡片按鈕的邏輯
+        document.getElementById('actionBtn').addEventListener('click', () => {
+            _supabase.auth.getSession().then(({ data: { session } }) => {
+                if (session) {
+                    showSection('applySection'); // 已登入，跳轉到報名表單
+                } else {
+                    showSection('loginSection'); // 未登入，跳轉到登入畫面
+                }
+            });
+        });
+
+        // --- 註冊邏輯 ---
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            toggleLoading('signupBtn', true);
+
+            const { data, error } = await _supabase.auth.signUp({ email, password });
+
+            toggleLoading('signupBtn', false);
+            if (error) {
+                alert('註冊失敗: ' + error.message);
+            } else {
+                alert('註冊成功！請檢查信箱確認驗證信（或直接使用帳號登入）。');
+                showSection('loginSection');
+            }
+        });
+
+        // --- 登入邏輯 ---
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            toggleLoading('loginBtn', true);
+
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+
+            toggleLoading('loginBtn', false);
+            if (error) {
+                alert('登入失敗: ' + error.message);
+            } else {
+                checkUserStatus(); // 更新登入狀態
+            }
+        });
+
+        // --- 登出邏輯 ---
+        async function handleLogout() {
+            const { error } = await _supabase.auth.signOut();
+            if (!error) checkUserStatus();
+        }
+
+        // --- 送出報名資料邏輯 ---
+        document.getElementById('applyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const session = await _supabase.auth.getSession();
+            if (!session.data.session) {
+                alert('請先登入才能報名。');
+                return showSection('loginSection');
+            }
+            toggleLoading('submitBtn', true);
+
+            const { error } = await _supabase
+                .from('applications')
+                .insert([{ 
+                    applicant_name: document.getElementById('name').value,
+                    applicant_id_card: document.getElementById('id_card').value,
+                    applicant_type: document.getElementById('type').value
+                }]);
+
+            toggleLoading('submitBtn', false);
+            if (error) {
+                alert('報名失敗: ' + error.message);
+            } else {
+                alert('報名成功！');
+                document.getElementById('applyForm').reset();
+                showSection('activitySection');
+            }
+        });
+
+        // --- 輔助函式：檢查用戶登入狀態並更新 UI ---
+        async function checkUserStatus() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            const authBtn = document.getElementById('authBtn');
+            const userEmail = document.getElementById('userEmail');
+            const actionBtnText = document.getElementById('actionBtnText');
+
+            if (session) {
+                // 已登入
+                authBtn.innerText = '登出';
+                userEmail.innerText = session.user.email;
+                userEmail.classList.remove('hidden');
+                actionBtnText.innerText = '立即報名'; // 更改活動按鈕文字
+                showSection('activitySection'); // 首頁
+            } else {
+                // 未登入
+                authBtn.innerText = '登入';
+                userEmail.classList.add('hidden');
+                actionBtnText.innerText = '登入後報名';
+                showSection('activitySection');
+            }
+        }
+
+        // --- 輔助函式：切換載入狀態 ---
+        function toggleLoading(btnId, isLoading) {
+            const text = document.getElementById(btnId + 'Text');
+            const loading = document.getElementById(btnId + 'Loading');
+            const btn = document.getElementById(btnId);
+            if (isLoading) {
+                text.classList.add('hidden');
+                loading.classList.remove('hidden');
+                btn.disabled = true;
+                btn.classList.add('opacity-70');
+            } else {
+                text.classList.remove('hidden');
+                loading.classList.add('hidden');
+                btn.disabled = false;
+                btn.classList.remove('opacity-70');
+            }
+        }
+
+        // 頁面載入時檢查狀態
+        checkUserStatus();
+
     </script>
 </body>
 </html>
